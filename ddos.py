@@ -27,8 +27,31 @@ def parser():
     parser.add_argument("--url",help="url")
     parser.add_argument("--payload",help="payload")
     parser.add_argument("--concurrencyCount",help="concurrencyCount")
+    parser.add_argument("--mode",choices=["single","manual","continuous"],help="mode")
+
     parser.parse_args()
     return parser
+async def manual(url,count,header):
+    while True:
+        userInput = input(">").strip()
+        if userInput == 'q':break
+        elif userInput in ['go','g']:
+            res = await concurrentReq(url,count,header)
+
+            # print()
+
+
+
+
+
+async def continuous(url,count,header,waitTime):
+    # print('a')
+    while True:
+        res = await concurrentReq(url,count,header,waitTime)
+        await asyncio.sleep(waitTime)
+        # userInput = input(">").strip()
+        # if userInput == 'q':break
+        # elif userInput in ['go','g']:
 
 
 async def main():
