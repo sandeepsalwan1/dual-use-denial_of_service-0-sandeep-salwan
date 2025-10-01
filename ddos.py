@@ -67,22 +67,22 @@ async def continuous(url,count,header,waitTime):
 def stats(res):
 
 
-    successCnt = sum(1 for r in res if r['ok'])
-    successTimes = [r['elapsed'] for r in res if r['ok']]
+    successCnt = sum(1 for r in res if r.get('success'))
+    successTimes = [r['time'] for r in res if  r.get('success')]
     if successTimes: 
         avgTime = sum(successTimes)/ len(successTimes)
-        print("avg"+avgTime+"\nmax"+max(successTimes))
-    print("success" + successCnt/len(res))
+        print("avg",avgTime,"max",max(successTimes))
+    print("success",successCnt/len(res))
 
-def headers(ipSpoof=None, ua=None,rotate=False):
-    h={}
-    if ipSpoof:
-        h['X-Forwarded-For'] = ipSpoof
-        h['X-Real-Ip'] = ipSpoof
-    if ua or rotate:
-        h['User-Agent'] = ua if ua else random.choice(uaLis)
+# def headers(ipSpoof=None, ua=None,rotate=False):
+#     h={}
+#     if ipSpoof:
+#         h['X-Forwarded-For'] = ipSpoof
+#         h['X-Real-IP'] = ipSpoof
+#     if ua or rotate:
+#         h['User-Agent'] = ua if ua else random.choice(uaLis)
 
-    return h
+    # return h
 
 async def main():
     url = "https://xuandi.org"
@@ -97,10 +97,12 @@ async def main():
         await continuous(url,5,{},1.2)
     print(res)
 
-    newRes = await concurrentReq(args.url, args.concurrency)
+    newRes = await concurrentReq(args.url or url, int(args.concurrencyCount or 5))
     # a
     stats(newRes)
 # p
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
