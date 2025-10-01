@@ -29,7 +29,7 @@ def parser():
     parser.add_argument("--concurrencyCount",help="concurrencyCount")
     parser.add_argument("--mode",choices=["single","manual","continuous"],help="mode")
 
-    parser.parse_args()
+    # parser.parse_args()
     return parser
 async def manual(url,count,header):
     while True:
@@ -53,7 +53,8 @@ async def continuous(url,count,header,waitTime):
             res = await concurrentReq(url,count,headers=header)
             await asyncio.sleep(waitTime)
     except KeyboardInterrupt:
-        print('err')
+        # print('err')
+        pass
             # userInput = input(">").strip()
             # if userInput == 'q':break
             # elif userInput in ['go','g']:
@@ -63,12 +64,12 @@ async def main():
     url = "https://xuandi.org"
     res = await request(url)
     res = await concurrentReq(url,6)
-    parser()
+    # parser()
     # print( )
     args= parser().parse_args()
     if args.mode== 'manual':
         await manual(url,5,{})
-    if args.mode== 'continuous':
+    elif args.mode== 'continuous':
         await continuous(url,5,{},1.2)
     print(res)
     #a
