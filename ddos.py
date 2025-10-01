@@ -22,12 +22,20 @@ async def concurrentReq(url,count,method='GET',payload=None, headers=None):
     coros = [request(url,method,payload,headers) for i in range(count)]
     return await asyncio.gather(*coros)
 
+def parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--url",help="url")
+    parser.add_argument("--payload",help="payload")
+    parser.add_argument("--concurrencyCount",help="concurrencyCount")
+    parser.parse_args()
+    return parser
+
 
 async def main():
     url = "https://xuandi.org"
     res = await request(url)
     res = await concurrentReq(url,6)
-
+    parser()
     # print( )
     print(res)
     #a
