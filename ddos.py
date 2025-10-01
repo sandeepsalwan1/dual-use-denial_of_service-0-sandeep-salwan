@@ -28,6 +28,9 @@ def parser():
     parser.add_argument("--payload",help="payload")
     parser.add_argument("--concurrencyCount",help="concurrencyCount")
     parser.add_argument("--mode",choices=["single","manual","continuous"],help="mode")
+    parser.add_argument("--spoofip",help="spoof")
+    parser.add_argument("--useragent",help="ua")
+    parser.add_argument("--rotate-ua",action='store_true',help="rotate")
 
     # parser.parse_args()
     return parser
@@ -60,6 +63,27 @@ async def continuous(url,count,header,waitTime):
             # elif userInput in ['go','g']:
 
 
+
+def stats(res):
+
+
+    successCnt = sum(1 for r in res if r['ok'])
+    successTimes = [r['elapsed'] for r in res if r['ok']]
+    if successTimes: 
+        avgTime = sum(successTimes)/ len(successTimes)
+        print("avg"+avgTime+"\nmax"+max(successTimes))
+    print("success" + successCnt/len(res))
+
+def headers(ipSpoof=None, ua=None,rotate=False):
+    h={}
+    if ipSpoof:
+        h['X-Forwarded-For'] = ipSpoof
+        h['X-Real-Ip'] = ipSpoof
+    if ua or rotate:
+        h['User-Agent'] = ua if ua else random.choice(uaLis)
+
+    return h
+
 async def main():
     url = "https://xuandi.org"
     res = await request(url)
@@ -72,7 +96,10 @@ async def main():
     elif args.mode== 'continuous':
         await continuous(url,5,{},1.2)
     print(res)
-    #a
+
+    newRes = await concurrentReq(args.url, args.concurrency)
+    # a
+    stats(newRes)
 # p
 
 if __name__ == "__main__":
