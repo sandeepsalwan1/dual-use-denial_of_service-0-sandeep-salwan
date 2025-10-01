@@ -16,12 +16,18 @@ async def request(url,method='GET',payload=None, headers=None):
                 return {"stat":resp.status, 'success':resp.status < 400, 'time':time.time()-star}
 
         except Exception as e:
-            return 
+            return {}
+
+async def concurrentReq(url,count,method='GET',payload=None, headers=None):
+    coros = [request(url,method,payload,headers) for i in range(count)]
+    return await asyncio.gather(*coros)
 
 
 async def main():
     url = "https://xuandi.org"
     res = await request(url)
+    res = await concurrentReq(url,6)
+
     # print( )
     print(res)
     #a
