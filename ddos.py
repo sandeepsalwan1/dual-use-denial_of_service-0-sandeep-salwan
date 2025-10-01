@@ -33,11 +33,13 @@ def parser():
     return parser
 async def manual(url,count,header):
     while True:
-        userInput = input(">").strip()
-        if userInput == 'q':break
-        elif userInput in ['go','g']:
-            res = await concurrentReq(url,count,header)
-
+        try:
+            userInput = input(">").strip()
+            if userInput == 'q':break
+            elif userInput in ['go','g']:
+                res = await concurrentReq(url,count,headers=header)
+        except KeyboardInterrupt:
+            break
             # print()
 
 
@@ -46,12 +48,15 @@ async def manual(url,count,header):
 
 async def continuous(url,count,header,waitTime):
     # print('a')
-    while True:
-        res = await concurrentReq(url,count,header,waitTime)
-        await asyncio.sleep(waitTime)
-        # userInput = input(">").strip()
-        # if userInput == 'q':break
-        # elif userInput in ['go','g']:
+    try:
+        while True:
+            res = await concurrentReq(url,count,headers=header)
+            await asyncio.sleep(waitTime)
+    except KeyboardInterrupt:
+        print('err')
+            # userInput = input(">").strip()
+            # if userInput == 'q':break
+            # elif userInput in ['go','g']:
 
 
 async def main():
@@ -60,6 +65,11 @@ async def main():
     res = await concurrentReq(url,6)
     parser()
     # print( )
+    args= parser().parse_args()
+    if args.mode== 'manual':
+        await manual(url,5,{})
+    if args.mode== 'continuous':
+        await continuous(url,5,{},1.2)
     print(res)
     #a
 # p
