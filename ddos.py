@@ -103,7 +103,8 @@ async def main():
     stats(newRes)
 
     hdrs =  mHeaders(args.spoofip,args.useragent, args.rotate_ua)
-    if hdrs: fin = await(concurrentReq(args.url, 3, hdrs))
+    if hdrs: 
+        fin = await concurrentReq(args.url or url, 3, headers=hdrs)
     print(len(hdrs))
 # p
 
