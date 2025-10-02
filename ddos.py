@@ -74,15 +74,16 @@ def stats(res):
         print("avg",avgTime,"max",max(successTimes))
     print("success",successCnt/len(res))
 
-# def headers(ipSpoof=None, ua=None,rotate=False):
-#     h={}
-#     if ipSpoof:
-#         h['X-Forwarded-For'] = ipSpoof
-#         h['X-Real-IP'] = ipSpoof
-#     if ua or rotate:
-#         h['User-Agent'] = ua if ua else random.choice(uaLis)
+uaLis=['Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0']
+def mHeaders(ipSpoof=None, ua=None,rotate=False):
+    h={}
+    if ipSpoof:
+        h['X-Forwarded-For'] = ipSpoof
+        h['X-Real-IP'] = ipSpoof
+    if ua or rotate:
+        h['User-Agent'] = ua if ua else random.choice(uaLis)
 
-    # return h
+    return h
 
 async def main():
     url = "https://xuandi.org"
@@ -100,6 +101,10 @@ async def main():
     newRes = await concurrentReq(args.url or url, int(args.concurrencyCount or 5))
     # a
     stats(newRes)
+
+    hdrs =  mHeaders(args.spoofip,args.useragent, args.rotate_ua)
+    if hdrs: fin = await(concurrentReq(args.url, 3, hdrs))
+    print(len(hdrs))
 # p
 
 if __name__ == "__main__":
